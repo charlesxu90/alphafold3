@@ -1,0 +1,7 @@
+alphafold3_db
+alphafold3_db/
+model/
+src/alphafold3/constants/converters/ccd.pickle
+dcgm/
+output/
+__pycache__/
