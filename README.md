@@ -47,6 +47,7 @@ pip install --upgrade "jax[cuda12_pip]" -f https://storage.googleapis.com/jax-re
 }
 ```
 Need to give the sequences, seeds. MSA can be searched using AF3 by default.
+Note: the `"id"` need to be a single character, e.g. 'A', 'B', or 'C'.
 
 ## Run the program
 ```shell
