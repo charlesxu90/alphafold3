@@ -20,6 +20,7 @@ sudo mv /usr/bin/g++ /usr/bin/g++.bak
 sudo ln -s /usr/bin/g++-11 /usr/bin/g++
 
 pip install -e .
+conda install bioconda::maxit
 ```
 
 ## Fix a bug from JAX
