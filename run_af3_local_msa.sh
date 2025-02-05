@@ -17,7 +17,8 @@ AF3_path=/home/xux/Desktop/Struct_pred/alphafold3
 # input_json=$data_path/l32_5p_ccd/data.json
 # input_json=$data_path/l32_6p/data.json
 
-data_path=/mnt/data/done_projects/Prot_pred/ref_works/0.struct_pred/alphafold3/results/savinase
+# data_path=/mnt/data/done_projects/Prot_pred/ref_works/0.struct_pred/alphafold3/results/savinase
+data_path=/mnt/data/done_projects/Prot_pred/ref_works/0.struct_pred/alphafold3/results/glucoamylase
 input_json=$data_path/input.json
 
 XLA_FLAGS="--xla_gpu_enable_triton_gemm=false" CUDA_VISIBLE_DEVICES=0 \

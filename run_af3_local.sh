@@ -17,4 +17,5 @@ for input_json in `ls $data_path/*/data.json`; do
 done
 
 # Batch converting cif to pdb
-for i in `ls $data_path/*/*.cif`; do maxit -input $i -output $i.pdb -o 2; done 
+for i in `ls $data_path/*/*.cif`; do echo $i; obabel -i cif $i -o pdb -O $i.pdb; done 
+# obabel -i cif results/savinase/top40_lasa_R4.csv-af3/m103/m103_model.cif -o pdb -O results/savinase/top40_lasa_R4.csv-af3/m103/m103_model.cif.pdb
