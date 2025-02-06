@@ -15,7 +15,8 @@ input_json=/ibex/scratch/projects/c2108/zhac/public_soft/alphafold3/output/2pv7/
 # input_json=/ibex/scratch/projects/c2108/zhac/public_soft/alphafold3/output/8aw3/8aw3_data.json #input_protien_rna_ion.json
 #input_json=/ibex/scratch/projects/c2108/zhac/public_soft/alphafold3/output/7bbv/7bbv_data.json #input_protien_gly_ion.json
 
-source activate /ibex/user/zhac/software/miniconda3/envs/af3
+source ~/miniconda3/etc/profile.d/conda.sh
+conda activate /ibex/user/zhac/software/miniconda3/envs/af3
 XLA_FLAGS="--xla_gpu_enable_triton_gemm=false" CUDA_VISIBLE_DEVICES=0 \
 	$PY3 run_alphafold.py \
 	--json_path=$input_json \

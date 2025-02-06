@@ -1,5 +1,6 @@
 PY3=/home/xux/miniconda3/envs/af3-env/bin/python
-source activate /home/xux/miniconda3/envs/af3-env
+source ~/miniconda3/etc/profile.d/conda.sh
+conda activate /home/xux/miniconda3/envs/af3-env
 AF3_path=/home/xux/Desktop/Struct_pred/alphafold3
 
 # Phytase WT
