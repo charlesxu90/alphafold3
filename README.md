@@ -20,7 +20,17 @@ sudo mv /usr/bin/g++ /usr/bin/g++.bak
 sudo ln -s /usr/bin/g++-11 /usr/bin/g++
 
 pip install -e .
-conda install bioconda::maxit
+
+# install maxit
+# download maxit source code from https://sw-tools.rcsb.org/apps/MAXIT/source.html
+cd maxit-*
+make
+make binary
+
+# move to /opt and add to PATH
+sudo mv maxit-* /opt
+export RCSBROOT=/opt/maxit-v11.300-prod-src
+export PATH="$RCSBROOT/bin:"$PATH
 ```
 
 ## Fix a bug from JAX
