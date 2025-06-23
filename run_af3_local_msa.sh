@@ -1,7 +1,7 @@
 PY3=/home/xux/miniconda3/envs/af3-env/bin/python
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate /home/xux/miniconda3/envs/af3-env
-AF3_path=/home/xux/Desktop/Struct_pred/alphafold3
+AF3_path=/home/xux/Desktop/done_projects/Prot_pred/ref_works/0.struct_pred/alphafold3
 
 # Phytase WT
 # input_json=$AF3_path/output/phytase_phytic_acid.json
@@ -19,7 +19,15 @@ AF3_path=/home/xux/Desktop/Struct_pred/alphafold3
 # input_json=$data_path/l32_6p/data.json
 
 # data_path=/mnt/data/done_projects/Prot_pred/ref_works/0.struct_pred/alphafold3/results/savinase
-data_path=/mnt/data/done_projects/Prot_pred/ref_works/0.struct_pred/alphafold3/results/glucoamylase
+# data_path=/mnt/data/done_projects/Prot_pred/ref_works/0.struct_pred/alphafold3/results/glucoamylase
+# input_json=$data_path/input.json
+
+# Savinase_wt
+# data_path=/mnt/data/done_projects/Prot_pred/ref_works/0.struct_pred/alphafold3/results/savinase/ca2_AAPF
+# input_json=$data_path/wt/data.json
+
+# PH20
+data_path=/mnt/data/done_projects/Prot_pred/ref_works/0.struct_pred/alphafold3/results/PH20/
 input_json=$data_path/input.json
 
 XLA_FLAGS="--xla_gpu_enable_triton_gemm=false" CUDA_VISIBLE_DEVICES=0 \

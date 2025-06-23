@@ -1,7 +1,7 @@
 PY3=/home/xux/miniconda3/envs/af3-env/bin/python
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate /home/xux/miniconda3/envs/af3-env
-AF3_path=/home/xux/Desktop/Struct_pred/alphafold3
+AF3_path=/home/xux/Desktop/done_projects/Prot_pred/ref_works/0.struct_pred/alphafold3
 
 # Run alphafold3
 data_path=$1
