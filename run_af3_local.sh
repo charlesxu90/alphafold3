@@ -14,7 +14,7 @@ fi
 
 for input_json in `ls $data_path/*/data.json`; do
 	XLA_FLAGS="--xla_gpu_enable_triton_gemm=false" CUDA_VISIBLE_DEVICES=$device \
-		$PY3 run_alphafold.py \
+		$PY3 $AF3_path/run_alphafold.py \
 		--json_path=$input_json \
 		--model_dir=$AF3_path/model \
 		--db_dir=$AF3_path/alphafold3_db \

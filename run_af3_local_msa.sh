@@ -27,7 +27,11 @@ AF3_path=/home/xux/Desktop/done_projects/Prot_pred/ref_works/0.struct_pred/alpha
 # input_json=$data_path/wt/data.json
 
 # PH20
-data_path=/mnt/data/done_projects/Prot_pred/ref_works/0.struct_pred/alphafold3/results/PH20/
+# data_path=/mnt/data/done_projects/Prot_pred/ref_works/0.struct_pred/alphafold3/results/PH20/
+# input_json=$data_path/input.json
+
+# PH20
+data_path=/mnt/data/done_projects/Prot_pred/ref_works/0.struct_pred/alphafold3/results/taqp/
 input_json=$data_path/input.json
 
 XLA_FLAGS="--xla_gpu_enable_triton_gemm=false" CUDA_VISIBLE_DEVICES=0 \
