@@ -49,6 +49,86 @@ _HMMSEARCH_BINARY_PATH = shutil.which('hmmsearch')
 _HMMBUILD_BINARY_PATH = shutil.which('hmmbuild')
 
 
+def load_a3m_file(a3m_path: str) -> str:
+  """Load A3M file and return its contents as a string.
+  
+  Args:
+    a3m_path: Path to the A3M file.
+    
+  Returns:
+    String contents of the A3M file.
+  """
+  with open(a3m_path, 'r') as f:
+    return f.read()
+
+
+def create_fold_input_with_a3m(
+    name: str,
+    sequences: list[dict[str, Any]],
+    model_seeds: list[int],
+    unpaired_msa_paths: dict[str, str] | None = None,
+    paired_msa_paths: dict[str, str] | None = None,
+) -> str:
+  """Create a fold input JSON with A3M MSAs loaded from files.
+  
+  Args:
+    name: Name of the fold input.
+    sequences: List of sequence dictionaries (proteins, ligands, etc.).
+    model_seeds: List of random seeds for model inference.
+    unpaired_msa_paths: Optional dict mapping chain IDs to unpaired A3M file paths.
+    paired_msa_paths: Optional dict mapping chain IDs to paired A3M file paths.
+    
+  Returns:
+    JSON string for the fold input.
+  """
+  # Process sequences and add MSAs from files if provided
+  processed_sequences = []
+  for seq in sequences:
+    seq_copy = seq.copy()
+    
+    # Handle protein sequences with MSAs
+    if 'protein' in seq_copy:
+      protein = seq_copy['protein'].copy()
+      raw_chain_id = protein.get('id')
+      # Handle both string and list formats for chain_id
+      chain_id = raw_chain_id[0] if isinstance(raw_chain_id, list) else raw_chain_id
+      
+      # Load unpaired MSA if path provided
+      if unpaired_msa_paths and chain_id in unpaired_msa_paths:
+        protein['unpairedMsa'] = load_a3m_file(unpaired_msa_paths[chain_id])
+      
+      # Load paired MSA if path provided  
+      if paired_msa_paths and chain_id in paired_msa_paths:
+        protein['pairedMsa'] = load_a3m_file(paired_msa_paths[chain_id])
+      
+      seq_copy['protein'] = protein
+    
+    # Handle RNA sequences with MSAs
+    elif 'rna' in seq_copy:
+      rna = seq_copy['rna'].copy()
+      raw_chain_id = rna.get('id')
+      # Handle both string and list formats for chain_id
+      chain_id = raw_chain_id[0] if isinstance(raw_chain_id, list) else raw_chain_id
+      
+      # Load unpaired MSA if path provided
+      if unpaired_msa_paths and chain_id in unpaired_msa_paths:
+        rna['unpairedMsa'] = load_a3m_file(unpaired_msa_paths[chain_id])
+      
+      seq_copy['rna'] = rna
+    
+    processed_sequences.append(seq_copy)
+  
+  fold_input = {
+      'name': name,
+      'modelSeeds': model_seeds,
+      'sequences': processed_sequences,
+      'dialect': folding_input.JSON_DIALECT,
+      'version': folding_input.JSON_VERSION,
+  }
+  
+  return json.dumps(fold_input)
+
+
 @contextlib.contextmanager
 def _output(name: str):
   with open(result_path := f'{absltest.TEST_TMPDIR.value}/{name}', "wb") as f:
@@ -460,6 +540,83 @@ class InferenceTest(test_utils.StructureTestCase):
             actual_inf.predicted_structure.atom_occupancy,
             [1.0] * actual_inf.predicted_structure.num_atoms,
         )
+
+  def test_inference_with_a3m_files(self):
+    """Test AlphaFold 3 inference with pre-computed A3M MSA files.
+    
+    This test demonstrates how to use pre-computed A3M files instead of
+    running the MSA search pipeline. This is useful when you already have
+    MSAs from external sources or want to reuse previously computed MSAs.
+    """
+    # Create temporary A3M files for testing
+    output_dir = self.create_tempdir()
+    
+    # Example unpaired MSA in A3M format
+    # In a real scenario, this would be your pre-computed A3M file
+    unpaired_a3m_content = """>5tgy_A
+SEFEKLRQTGDELVQAFQRLREIFDKGDDDSLEQVLEEIEELIQKHRQLFDNRQEAADTEAAKQGDQWVQLFQRFREAIDKGDKDSLEQLLEELEQALQKIRELAEKKN
+>seq1
+SEFEKLRQTGDELVQAFQRLREIFDKGDDDSLEQVLEEIEELIQKHRQLFDNRQEAADTEAAKQGDQWVQLFQRFREAIDKGDKDSLEQLLEELEQALQKIRELAEKKN
+>seq2
+SEFEKLRQTGDELVQAFQRLREIFDKGDDDSLEQVLEEIEELIQKHRQLFDNRQEAADTEAAKQGDQWVQLFQRFREAIDKGDKDSLEQLLEELEQALQKIRELAEKKN
+"""
+    
+    # Example paired MSA in A3M format  
+    paired_a3m_content = """>5tgy_A
+SEFEKLRQTGDELVQAFQRLREIFDKGDDDSLEQVLEEIEELIQKHRQLFDNRQEAADTEAAKQGDQWVQLFQRFREAIDKGDKDSLEQLLEELEQALQKIRELAEKKN
+>paired_seq1
+SEFEKLRQTGDELVQAFQRLREIFDKGDDDSLEQVLEEIEELIQKHRQLFDNRQEAADTEAAKQGDQWVQLFQRFREAIDKGDKDSLEQLLEELEQALQKIRELAEKKN
+"""
+    
+    # Write A3M files to temporary directory
+    unpaired_a3m_path = os.path.join(output_dir, 'unpaired.a3m')
+    paired_a3m_path = os.path.join(output_dir, 'paired.a3m')
+    
+    with open(unpaired_a3m_path, 'w') as f:
+      f.write(unpaired_a3m_content)
+    with open(paired_a3m_path, 'w') as f:
+      f.write(paired_a3m_content)
+    
+    # Define sequences with chain IDs
+    sequences = [
+        {
+            'protein': {
+                'id': 'A',
+                'sequence': 'SEFEKLRQTGDELVQAFQRLREIFDKGDDDSLEQVLEEIEELIQKHRQLFDNRQEAADTEAAKQGDQWVQLFQRFREAIDKGDKDSLEQLLEELEQALQKIRELAEKKN',
+                'modifications': [],
+            }
+        },
+        {'ligand': {'id': 'B', 'ccdCodes': ['7BU']}},
+    ]
+    
+    # Create fold input with A3M files
+    test_input_json = create_fold_input_with_a3m(
+        name='5tgy_with_a3m',
+        sequences=sequences,
+        model_seeds=[1234],
+        unpaired_msa_paths={'A': unpaired_a3m_path},
+        paired_msa_paths={'A': paired_a3m_path},
+    )
+    
+    # Verify the fold input was created correctly
+    fold_input = folding_input.Input.from_json(test_input_json)
+    self.assertIsNotNone(fold_input.protein_chains[0].unpaired_msa)
+    self.assertIsNotNone(fold_input.protein_chains[0].paired_msa)
+    self.assertIn('5tgy_A', fold_input.protein_chains[0].unpaired_msa)
+    
+    # Now you can run inference without the MSA search pipeline
+    # by setting data_pipeline_config=None
+    inference_output_dir = self.create_tempdir()
+    results = run_alphafold.process_fold_input(
+        fold_input=fold_input,
+        data_pipeline_config=None,  # Skip MSA search since we have MSAs
+        model_runner=self._runner,
+        output_dir=inference_output_dir,
+    )
+    
+    # Verify results were generated
+    self.assertIsNotNone(results)
+    self.assertGreater(len(results), 0)
 
 
 if __name__ == '__main__':

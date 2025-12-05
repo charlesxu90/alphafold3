@@ -1,7 +1,7 @@
 PY3=/home/xux/miniconda3/envs/af3-env/bin/python
-source ~/miniconda3/etc/profile.d/conda.sh
-conda activate /home/xux/miniconda3/envs/af3-env
-AF3_path=/home/xux/Desktop/done_projects/Prot_pred/ref_works/0.struct_pred/alphafold3
+# source ~/miniconda3/etc/profile.d/conda.sh
+# conda activate /home/xux/miniconda3/envs/af3-env
+AF3_path=/home/xux/Desktop/done_projects/Struct_pred/0.general_complex/alphafold3
 
 # Run alphafold3
 data_path=$1
@@ -12,7 +12,7 @@ else
 	device=$2
 fi
 
-for input_json in `ls $data_path/*/data.json`; do
+for input_json in `ls $data_path/*/input.json`; do
 	XLA_FLAGS="--xla_gpu_enable_triton_gemm=false" CUDA_VISIBLE_DEVICES=$device \
 		$PY3 $AF3_path/run_alphafold.py \
 		--json_path=$input_json \

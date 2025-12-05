@@ -2,10 +2,10 @@
 
 ## Create the environment with the following commands
 ```shell
-mamba env create -f environment.yml -n af3-env
+mamba env create -f environment.yml
 
 # activate environment
-conda activate af3-env
+mamba activate af3-env
 ```
 
 ## Install the requirements with pip
