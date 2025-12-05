@@ -6,3 +6,4 @@ dcgm/
 output/
 __pycache__/
 results/
+.vscode/
