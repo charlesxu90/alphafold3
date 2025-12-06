@@ -1,8 +1,8 @@
-PY3=/home/xux/miniconda3/envs/af3-env/bin/python
-# source ~/miniconda3/etc/profile.d/conda.sh
-# conda activate /home/xux/miniconda3/envs/af3-env
-AF3_path=/home/xux/Desktop/done_projects/Struct_pred/0.general_complex/alphafold3
+# PY3=/home/xux/miniforge3/envs/af3-env/bin/python
+# AF3_path=/home/xux/Desktop/done_projects/Struct_pred/0.general_complex/alphafold3
 
+AF3_path=/home/xux/Desktop/ProteinMCP/ProteinMCP/mcp-servers/alphafold3_mcp/repo/alphafold3
+PY3=/home/xux/Desktop/ProteinMCP/ProteinMCP/mcp-servers/alphafold3_mcp/env/bin/python
 # Run alphafold3
 data_path=$1
 # set device to 0 if $2 is not set
@@ -19,14 +19,9 @@ for input_json in `ls $data_path/*/input.json`; do
 		--model_dir=$AF3_path/model \
 		--db_dir=$AF3_path/alphafold3_db \
 		--output_dir=$data_path \
-		--run_data_pipeline=false --run_inference=true
+		--run_data_pipeline=true --run_inference=true
 		# --flash_attention_implementation=xla # need if GPU is not A100
 done
 
-# Batch converting cif to pdb
-# Using maxit
-# maxit -o 2 -input /home/xux/Desktop/BestzymeP/Glucoamylase/Gluco_opt/data/BSJ_data_processed/Yufan_R5_DD_CD.csv-af3/1404-m291/1404-m291_model.cif  -output /home/xux/Desktop/BestzymeP/Glucoamylase/Gluco_opt/data/BSJ_data_processed/Yufan_R5_DD_CD.csv-af3/1404-m291/1404-m291_model.cif.pdb
-for i in `ls $data_path/*/*.cif`; do echo $i; maxit -o 2 -input $i -output $i.pdb; done
-# Using openbabel
-# for i in `ls $data_path/*/*.cif`; do echo $i; obabel -i cif $i -o pdb -O $i.pdb -p "PerceiveBondOrders"; done 
-# obabel -i cif results/savinase/top40_lasa_R4.csv-af3/m103/m103_model.cif -o pdb -O results/savinase/top40_lasa_R4.csv-af3/m103/m103_model.cif.pdb
+# Batch converting cif to pdb using maxit
+# for i in `ls $data_path/*/*.cif`; do echo $i; maxit -o 2 -input $i -output $i.pdb; done

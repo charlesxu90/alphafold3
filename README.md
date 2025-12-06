@@ -1,19 +1,16 @@
-# Install
+# AlphaFold3 code based
+A self-maintained AlphaFold3 database for easily calling and using AlphaFold3.
 
-## Create the environment with the following commands
+## Install
+
+### Create conda environment
 ```shell
 mamba env create -f environment.yml
-
-# activate environment
 mamba activate af3-env
-```
-
-## Install the requirements with pip
-```shell
 pip install -r requirements.txt
 ```
 
-## Build and install alphafold3
+### Build and install alphafold3
 ```shell
 # Need to use g++ 11.4 in bulding
 sudo mv /usr/bin/g++ /usr/bin/g++.bak
@@ -21,7 +18,18 @@ sudo ln -s /usr/bin/g++-11 /usr/bin/g++
 
 pip install -e .
 
-# install maxit
+# Build data
+build_data
+
+## Fix a bug from JAX
+pip install --upgrade "jax[cuda12_pip]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
+
+# Download AlphaFold3 database
+bash fetch_databases.sh ./alphafold3_db
+```
+### Install maxit to convert cif to pdb
+
+```shell
 # download maxit source code from https://sw-tools.rcsb.org/apps/MAXIT/source.html
 cd maxit-*
 make
@@ -33,14 +41,32 @@ export RCSBROOT=/opt/maxit-v11.300-prod-src
 export PATH="$RCSBROOT/bin:"$PATH
 ```
 
-## Fix a bug from JAX
+### Install hmmer
 ```shell
-pip install --upgrade "jax[cuda12_pip]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
+export AF3_REPO_PATH=$(pwd)
+
+mkdir /tmp/hmmer_build
+wget http://eddylab.org/software/hmmer/hmmer-3.4.tar.gz --directory-prefix /tmp/hmmer_build
+cd /tmp/hmmer_build && echo "ca70d94fd0cf271bd7063423aabb116d42de533117343a9b27a65c17ff06fbf3 hmmer-3.4.tar.gz" | sha256sum --check
+tar zxf hmmer-3.4.tar.gz && rm hmmer-3.4.tar.gz
+cp $AF3_REPO_PATH/docker/jackhmmer_seq_limit.patch /tmp/hmmer_build
+patch -p0 < jackhmmer_seq_limit.patch
+cd hmmer-3.4 
+./configure --prefix=$CONDA_PREFIX
+make -j
+make install
+cd easel && make install
+rm -R /tmp/hmmer_build
+``` 
+
+### Download models
+```shell
+# Obtain license from Google DeepMind, download and put it into $AF3_REPO_PATH/model
 ```
 
-# Usage
+## Basic usage
 
-## Prepare the Json config file
+### Prepare the Json config file
 ```json
 {
   "name": "2PV7",
@@ -60,23 +86,15 @@ pip install --upgrade "jax[cuda12_pip]" -f https://storage.googleapis.com/jax-re
 Need to give the sequences, seeds. MSA can be searched using AF3 by default.
 Note: the `"id"` need to be a single character, e.g. 'A', 'B', or 'C'.
 
-## Run the program
+### Run AlphaFold3
 ```shell
-bash run_af3.sh
-```
-```shell
-# run_af3.sh
-PY3=/home/xiaopeng/miniconda3/envs/af3-env/bin/python
-source activate /home/xiaopeng/miniconda3/envs/af3-env
-AF3_path=/home/xiaopeng/Desktop/Struct_pred/alphafold3
+mamba activate /home/xiaopeng/miniconda3/envs/af3-env
+AF3_path=${pwd}
 
 input_json=$AF3_path/output/input.json
-# input_json=$AF3_path/output/2pv7/2pv7_data.json
-# input_json=$AF3_path/output/8aw3/8aw3_data.json #input_protien_rna_ion.json
-#input_json=$AF3_path/output/7bbv/7bbv_data.json #input_protien_gly_ion.json
 
 XLA_FLAGS="--xla_gpu_enable_triton_gemm=false" CUDA_VISIBLE_DEVICES=0 \
-	$PY3 run_alphafold.py \
+	python run_alphafold.py \
 	--json_path=$input_json \
 	--model_dir=$AF3_path/model \
 	--db_dir=$AF3_path/alphafold3_db \
