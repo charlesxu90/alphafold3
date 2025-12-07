@@ -1,5 +1,5 @@
 # AlphaFold3 code based
-A self-maintained AlphaFold3 database for easily calling and using AlphaFold3.
+A self-maintained AlphaFold3 codebase for easily calling and using AlphaFold3.
 
 ## Install
 
