@@ -8,8 +8,9 @@
 #   with --wt_data_json), it skips MSA/template search and runs inference directly.
 # - If input.json contains msa_path references, it loads A3M files and searches templates.
 
-PY3=/home/xux/miniforge3/envs/af3-env/bin/python
-AF3_path=/home/xux/Desktop/done_projects/Struct_pred/0.general_complex/alphafold3
+# PY3=/home/xux/miniforge3/envs/af3-env/bin/python
+# AF3_path=/home/xux/Desktop/done_projects/Struct_pred/0.general_complex/alphafold3
+AF3_path=$(pwd)
 
 # Parse arguments
 input_dir=$1
@@ -37,7 +38,7 @@ echo "  GPU device: $device"
 echo ""
 
 XLA_FLAGS="--xla_gpu_enable_triton_gemm=false" CUDA_VISIBLE_DEVICES=$device \
-    $PY3 $AF3_path/run_alphafold_with_a3m_batch.py \
+    python $AF3_path/run_alphafold_with_a3m_batch.py \
     --batch_input_dir=$input_dir \
     --model_dir=$AF3_path/model \
     --db_dir=$AF3_path/alphafold3_db \
