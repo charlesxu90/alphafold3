@@ -1,4 +1,4 @@
-# AlphaFold3 code based
+# AlphaFold3 codebase
 A self-maintained AlphaFold3 codebase for easily calling and using AlphaFold3.
 
 ## Install
