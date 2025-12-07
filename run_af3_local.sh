@@ -25,3 +25,4 @@ done
 
 # Batch converting cif to pdb using maxit
 # for i in `ls $data_path/*/*.cif`; do echo $i; maxit -o 2 -input $i -output $i.pdb; done
+# rm maxit.log

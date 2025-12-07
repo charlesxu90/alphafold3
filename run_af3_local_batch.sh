@@ -54,3 +54,4 @@ XLA_FLAGS="--xla_gpu_enable_triton_gemm=false" CUDA_VISIBLE_DEVICES=$device \
 #         [ -f "$cif" ] && maxit -input $cif -output ${cif%.cif}.pdb -o 2
 #     done
 # done
+# rm maxit.log

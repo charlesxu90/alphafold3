@@ -26,4 +26,4 @@ XLA_FLAGS="--xla_gpu_enable_triton_gemm=false" CUDA_VISIBLE_DEVICES=$device \
 
 # Batch converting cif to pdb
 # for i in $data_path/*.cif; do maxit -input $i -output $i.pdb -o 2; done 
-
+# rm maxit.log
