@@ -8,3 +8,7 @@ __pycache__/
 results/
 .vscode/
 example/
+src/alphafold3/constants/converters/chemical_component_sets.pickle
+env/
+model
+build.log

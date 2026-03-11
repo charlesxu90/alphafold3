@@ -10,7 +10,7 @@ else
 	device=$2
 fi
 
-for input_json in `ls $data_path/*/input.json`; do
+for input_json in `ls $data_path/input.json`; do
 	XLA_FLAGS="--xla_gpu_enable_triton_gemm=false" CUDA_VISIBLE_DEVICES=$device \
 		python $AF3_path/run_alphafold.py \
 		--json_path=$input_json \
